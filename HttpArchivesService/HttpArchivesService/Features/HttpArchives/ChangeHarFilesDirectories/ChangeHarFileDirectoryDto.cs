@@ -3,6 +3,6 @@
     public class ChangeHarFileDirectoryDto
     {
         public int HarId { get; set; }
-        public int NewDirectoryId { get; set; }
+        public int? NewDirectoryId { get; set; }
     }
 }

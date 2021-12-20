@@ -39,13 +39,25 @@ namespace HttpArchivesService.Features.HttpArchives.ChangeHarFilesDirectories
 
                 ValidateMoveModels(request);
 
-                var harIdsToMove = request.ChangeHarDirectoryDtos.Select(har => har.HarId).ToHashSet();
-                var newDirectoriesIds = request.ChangeHarDirectoryDtos.Select(har => har.NewDirectoryId).ToHashSet();
+                var harIdsToMove = request.ChangeHarDirectoryDtos
+                    .Select(har => har.HarId)
+                    .ToHashSet();
 
-                var hars = await this._context.HttpArchiveRecords.Where(har => harIdsToMove.Contains(har.Id)).ToListAsync();
+                var hars = await this._context.HttpArchiveRecords
+                    .Where(har => harIdsToMove.Contains(har.Id))
+                    .ToListAsync();
+                
+                var newDirectoriesIds = request.ChangeHarDirectoryDtos
+                    .Where(har => har.NewDirectoryId.HasValue)
+                    .Select(har => har.NewDirectoryId.Value)
+                    .ToHashSet();
+
+                var directories = await this._context.Directories
+                    .Where(dir => newDirectoriesIds.Contains(dir.Id))
+                    .ToListAsync();
 
                 ValidateHarFilesBelongToUser(user, hars);
-                ValidateDirectoriesBelongToUser(user, hars);
+                ValidateDirectoriesBelongToUser(user, directories);
 
                 hars.ForEach(har =>
                 {
@@ -79,12 +91,13 @@ namespace HttpArchivesService.Features.HttpArchives.ChangeHarFilesDirectories
                 }
             }
 
-            private void ValidateDirectoriesBelongToUser(IdentityUser user, List<HttpArchiveRecord> hars)
+            private void ValidateDirectoriesBelongToUser(IdentityUser user, List<Directory> directories)
             {
-                var harsNotOwnedByUser = hars.Where(dir => dir.UserId != user.Id).ToList();
-                if (harsNotOwnedByUser.Any())
+                var directoriesNotOwnedByUser = directories.Where(dir => dir.UserId != user.Id);
+
+                if (directoriesNotOwnedByUser.Any())
                 {
-                    throw new UserFriendlyException(StatusCodes.Status401Unauthorized, "Some of the http archives being renamed are not owned by the user");
+                    throw new UserFriendlyException(StatusCodes.Status401Unauthorized, "Some of the files are being moved to directories not owned by the user");
                 }
             }
         }

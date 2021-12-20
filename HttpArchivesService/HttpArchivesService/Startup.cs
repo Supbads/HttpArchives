@@ -1,4 +1,3 @@
-using HttpArchivesService.Configurations;
 using HttpArchivesService.Data;
 using HttpArchivesService.Features.Shared;
 using HttpArchivesService.Features.Shared.Interfaces;
@@ -13,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace HttpArchivesService
 {
@@ -55,7 +55,12 @@ namespace HttpArchivesService
             services.ConfigureApplicationCookie(config =>
             {
                 config.Cookie.Name = "cookie";
-                config.LoginPath = "/auth/login";
+                //config.LoginPath = "/auth/login";
+                config.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = 401;
+                    return Task.CompletedTask;
+                };
             });
 
             services.AddHttpContextAccessor();
@@ -73,7 +78,6 @@ namespace HttpArchivesService
             {
                 c.CustomSchemaIds(type => type.ToString());
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "HttpArchivesService", Version = "v1" });
-                c.OperationFilter<SwaggerFileOperationFilter>();
             });
         }
 

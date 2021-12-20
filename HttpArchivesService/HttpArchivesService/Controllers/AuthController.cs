@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using HttpArchivesService.Features.Shared.Exceptions;
 
@@ -29,6 +28,8 @@ namespace HttpArchivesService.Controllers
 
         [HttpPost]
         [Route("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(string username, string password)
         {
             var user = await this._userManager.FindByNameAsync(username);
@@ -50,6 +51,8 @@ namespace HttpArchivesService.Controllers
 
         [HttpPost]
         [Route("register")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register(string username, string password)
         {
             var identityUser = new IdentityUser(username);
@@ -67,31 +70,14 @@ namespace HttpArchivesService.Controllers
 
         [HttpPost]
         [Route("logout")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Logout()
         {
             await this._signInManager.SignOutAsync();
             await this._httpContextAccessor.HttpContext.SignOutAsync();
 
             return Ok();
-        }
-
-        [HttpGet]
-        [Route("accessible")]
-        public async Task<IActionResult> Accessible()
-        {
-            var user = this._httpContextAccessor.HttpContext.User;
-            var userManagerUser = await this._userManager.GetUserAsync(user);
-            var userId = userManagerUser.Id;
-
-            return Ok(userId);
-        }
-
-        [HttpGet]
-        [Route("unaccessible")]
-        [Authorize]
-        public IActionResult Unaccessible()
-        {
-            return Ok(5);
         }
 
         private string BuildIdentityResultErrorMessage(IdentityResult validationResult)

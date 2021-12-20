@@ -59,6 +59,9 @@ namespace HttpArchivesService.Features.HttpArchives.ChangeHarFilesDirectories
                 ValidateHarFilesBelongToUser(user, hars);
                 ValidateDirectoriesBelongToUser(user, directories);
 
+                //todo validate duplicates in dirs
+                //todo validate duplicates at root
+
                 hars.ForEach(har =>
                 {
                     var newDirectoryId = request.ChangeHarDirectoryDtos
@@ -99,6 +102,90 @@ namespace HttpArchivesService.Features.HttpArchives.ChangeHarFilesDirectories
                 {
                     throw new UserFriendlyException(StatusCodes.Status401Unauthorized, "Some of the files are being moved to directories not owned by the user");
                 }
+            }
+
+            //private void ValidateRequestDoesNotCreateDuplicatesInADirectory(HARUploadRequestDto request)
+            //{
+            //    var containsDuplicateFilesOnADirecotry = request.Files
+            //        .GroupBy(x => GenerateVolatileIdFromDirAndFileName(x.DirId, x.Name))
+            //        .Any(group => group.Count() > 1);
+
+            //    if (containsDuplicateFilesOnADirecotry)
+            //    {
+            //        throw new UserFriendlyException(StatusCodes.Status400BadRequest, "Cannot save two files with the same name in the same directory.");
+            //    }
+            //}
+
+            //private async Task ValidateRequestFilesDirectories(HARUploadRequestDto request, IdentityUser user)
+            //{
+            //    var directoryKeys = request.Files
+            //        .Where(f => f.DirId.HasValue)
+            //        .Select(f => f.DirId)
+            //        .ToHashSet();
+
+            //    if (!directoryKeys.Any())
+            //    {
+            //        return;
+            //    }
+
+            //    var dirs = await this._context.Directories
+            //        .Where(dir => directoryKeys.Contains(dir.Id))
+            //        .Select(dir => new DIrectorySlimDto
+            //        {
+            //            Id = dir.Id,
+            //            UserId = dir.UserId,
+            //            HARs = dir.ArchiveRecords.Select(har => new HarFileSlimDto
+            //            {
+            //                FileName = har.FileName
+            //            })
+            //        })
+            //        .ToArrayAsync();
+
+            //    var unauthorizedDirs = dirs.Where(dir => dir.UserId != user.Id);
+            //    if (unauthorizedDirs.Any())
+            //    {
+            //        throw new UserFriendlyException(StatusCodes.Status401Unauthorized, $"Could not upload files as some directories do not belong to the user");
+            //    }
+
+            //    var duplicateHarFilesInDirectories = request.Files.Where(requestFile =>
+            //    {
+            //        var dir = dirs.Where(dir => dir.Id == requestFile.DirId).FirstOrDefault();
+            //        if (dir == null)
+            //        {
+            //            throw new UserFriendlyException(StatusCodes.Status400BadRequest, $"Could not upload files as some directories do not exist");
+            //        }
+
+            //        return dir.HARs.Any(h => h.FileName == requestFile.Name);
+
+            //    }).Select(f => f.Name)
+            //        .ToArray();
+
+            //    if (duplicateHarFilesInDirectories.Any())
+            //    {
+            //        throw new UserFriendlyException(StatusCodes.Status400BadRequest,
+            //            $"Upload failed. Some files: {string.Join(", ", duplicateHarFilesInDirectories)} , are already present in the directory");
+            //    }
+            //}
+
+            //private async Task ValidateRequestDoesNotCreateDuplicatesInRootDirectory(string userId, HARUploadRequestDto request)
+            //{
+            //    var userRootLevelHars = (await this._context.HttpArchiveRecords.Where(har => har.UserId == userId && har.DirId == null)
+            //        .Select(har => har.FileName)
+            //        .ToArrayAsync())
+            //        .ToHashSet();
+
+            //    bool containsRootLevelDuplicates = request.FormFiles.Any(har => userRootLevelHars.Contains(har.FileName));
+
+            //    if (containsRootLevelDuplicates)
+            //    {
+            //        throw new UserFriendlyException(StatusCodes.Status400BadRequest, "Failed to save files as some will duplicate by name");
+            //    }
+            //}
+
+            private static string GenerateVolatileIdFromDirAndFileName(int? dirId, string fileName)
+            {
+                var dirIdStr = dirId.HasValue ? dirId.ToString() : "root";
+                return $"{dirIdStr}-{fileName}"; //account for multiple HAR files with the same name in different dirs
             }
         }
     }

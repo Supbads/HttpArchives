@@ -28,15 +28,16 @@ namespace HttpArchivesService.Controllers
         [Authorize]
         [HttpGet]
         [Route("get-by-current-user")]
-        public async Task<ActionResult<GetHarsResponseDto>> GetUserSavedHARs([Required] GetHarsByCurrentUser.GetHarsRequest request)
+        public async Task<ActionResult<GetHarsResponseDto>> GetUserSavedHARs()
         {
+            var request = new GetHarsByCurrentUser.GetHarsRequest();
             return await this._mediator.Send(request);
         }
 
         [Authorize]
         [HttpGet]
         [Route("get-by-id")]
-        public async Task<ActionResult<HarResponseDto>> GetdHARsById([Required] GetHarById.GetHarByIdRequest request)
+        public async Task<ActionResult<HarResponseDto>> GetdHARsById([Required][FromQuery] GetHarById.GetHarByIdRequest request)
         {
             return await this._mediator.Send(request);
         }
@@ -44,8 +45,13 @@ namespace HttpArchivesService.Controllers
         [Authorize]
         [HttpPost]
         [Route("save-for-current-user")]
-        public async Task<ActionResult<HarUploadResponseDto>> SaveHARsForUser([Required] UploadHarFilessFeature.HARUploadRequestDto request)
+        public async Task<ActionResult<HarUploadResponseDto>> SaveHARsForUser([Required] IFormFile[] files)
         {
+            var request = new UploadHarFilessFeature.HarUploadRequestDto
+            {
+                FormFiles = files
+            };
+
             return await this._mediator.Send(request);
         }
 
@@ -65,21 +71,6 @@ namespace HttpArchivesService.Controllers
         public async Task<IActionResult> RenameHARsForUser([Required] RenameHarFilesDirectories.RenameHarsRequest renameRequests)
         {
             await this._mediator.Send(renameRequests);
-
-            return Ok();
-        }
-
-        [Authorize]
-        [HttpPost]
-        [Route("test-save-for-current-user")]
-        public async Task<IActionResult> SaveHARsForUserTest([Required] IFormFile[] files)
-        {
-            if (files == null || !files.Any())
-            {
-                return BadRequest("");
-            }
-            
-            //query
 
             return Ok();
         }

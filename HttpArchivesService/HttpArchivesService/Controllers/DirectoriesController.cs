@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using HttpArchivesService.Features.Directories.CreateDirectory;
 using HttpArchivesService.Features.Directories.GetDirectories;
 using HttpArchivesService.Features.Directories.RenameDirectories;
+using Microsoft.AspNetCore.Http;
 
 namespace HttpArchivesService.Controllers
 {
@@ -23,6 +24,9 @@ namespace HttpArchivesService.Controllers
         [Authorize]
         [HttpGet]
         [Route("get-by-current-user")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<GetDirectoriesResponseDto>> GetDirectoriesByCurrentUser()
         {
             var request = new GetDirectoriesByCurrentUser.GetDirectoriesRequest();

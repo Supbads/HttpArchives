@@ -14,19 +14,19 @@ using Microsoft.AspNetCore.Http;
 
 namespace HttpArchivesService.Features.HttpArchives.RenameHarFiles
 {
-    public class RenameHarFiles
+    public class RenameHarFilesDirectories
     {
         public class RenameHarsRequest : IRequest<Unit>
         {
             public HarRenameDto[] RenameHarDtos { get; set; }
         }
 
-        public class RenameDirectoriesHandle : IRequestHandler<RenameHarsRequest, Unit>
+        public class RenameHarsHandle : IRequestHandler<RenameHarsRequest, Unit>
         {
             private readonly AppDbContext _context;
             private readonly IUserProvider _userProvider;
 
-            public RenameDirectoriesHandle(
+            public RenameHarsHandle(
                 AppDbContext context,
                 IUserProvider userProvider)
             {

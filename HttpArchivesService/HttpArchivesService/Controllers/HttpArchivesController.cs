@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using HttpArchivesService.Features.HttpArchives.GetHarById;
 using HttpArchivesService.Features.HttpArchives.GetHarsByCurrentUser;
+using HttpArchivesService.Features.HttpArchives.ChangeHarFilesDirectories;
 
 namespace HttpArchivesService.Controllers
 {
@@ -50,8 +51,18 @@ namespace HttpArchivesService.Controllers
 
         [Authorize]
         [HttpPost]
+        [Route("move-multiple")]
+        public async Task<ActionResult<HarUploadResponseDto>> MoveHARs([Required] ChangeHarFilesDirectories.ChangeHarFilesDirectoriesRequest request)
+        {
+            await this._mediator.Send(request);
+
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost]
         [Route("rename-multiple")]
-        public async Task<IActionResult> RenameHARsForUser([Required] RenameHarFiles.RenameHarsRequest renameRequests)
+        public async Task<IActionResult> RenameHARsForUser([Required] RenameHarFilesDirectories.RenameHarsRequest renameRequests)
         {
             await this._mediator.Send(renameRequests);
 

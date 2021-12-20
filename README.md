@@ -1,7 +1,11 @@
 # Http Archives Assignment
 
 ## How to run
-### Service: The project uses ASP.Net Core 5 and can be run via Visual Studio's Build/Run/Debug functionalities if the .Net Core 5 SDK is installed.
+### Service
+The project uses ASP.Net Core 5 and can be run via Visual Studio's Build/Run/Debug functionalities if the .Net Core 5 SDK is installed.
+For a DB it uses an in memory DB integrated with EntityFramework to persist users and other data while the application is running.
+Once it is restarted the data is cleared.
+
 ### Client: WIP
 
 ##

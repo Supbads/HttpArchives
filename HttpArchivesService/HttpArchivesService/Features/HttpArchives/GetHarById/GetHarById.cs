@@ -3,6 +3,10 @@ using System.Threading.Tasks;
 using MediatR;
 using HttpArchivesService.Data;
 using HttpArchivesService.Features.Shared.Interfaces;
+using HttpArchivesService.Features.Shared.Exceptions;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace HttpArchivesService.Features.HttpArchives.GetHarById
 {
@@ -30,17 +34,26 @@ namespace HttpArchivesService.Features.HttpArchives.GetHarById
             {
                 var user = await _userProvider.GetCurrentUserExplicit();
 
-                var har = await this._context.HttpArchiveRecords.FindAsync(request.HarId);
+                var har = await this._context.HttpArchiveRecords
+                    .Where(har => har.Id == request.HarId)
+                    .Select(har => new
+                    {
+                        har.Id,
+                        har.UserId,
+                        har.DirId,
+                        har.FileName,
+                    }).FirstOrDefaultAsync();
 
-                // todo validate
-                //todo finish
+                if (har.UserId != user.Id)
+                {
+                    throw new UserFriendlyException(StatusCodes.Status401Unauthorized, $"User is not authorized to access har with id: {request.HarId}");
+                }
 
                 var result = new HarResponseDto
                 {
                     Id = har.Id,
                     FileName = har.FileName,
-                    DirId = har.DirId,
-                    //File = har.File
+                    DirId = har.DirId
                 };
 
                 return result;

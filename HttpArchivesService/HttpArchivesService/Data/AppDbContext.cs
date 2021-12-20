@@ -27,8 +27,8 @@ namespace HttpArchivesService.Data
                 b.Property(x => x.UserId).IsRequired();
                 b.Property(x => x.FileName).IsRequired();
                 b.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId);
-                b.Property(x => x.DirId).IsRequired(false); //todo test root
-                b.HasOne(x => x.Directory).WithMany(d => d.ArchiveRecords); //.IsRequired(false); todo test
+                b.Property(x => x.DirId).IsRequired(false);
+                b.HasOne(x => x.Directory).WithMany(d => d.ArchiveRecords);
             });
 
             builder.Entity<Directory>(b => {

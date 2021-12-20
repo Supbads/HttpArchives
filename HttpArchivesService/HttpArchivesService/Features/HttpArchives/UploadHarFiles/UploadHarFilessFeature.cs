@@ -51,7 +51,7 @@ namespace HttpArchivesService.Features.HttpArchives.UploadHarFiles
                         FileName = x.Name,
                         DirId = x.DirId,
                         UserId = user.Id,
-                        //HarFile = x.File todo figure out how to save
+                        //HarFile = x.File todo figure out apropraite save format
                     };
                 });
 

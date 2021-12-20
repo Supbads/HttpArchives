@@ -4,6 +4,8 @@
 ### Service: The project uses ASP.Net Core 5 and can be run via Visual Studio's Build/Run/Debug functionalities if the .Net Core 5 SDK is installed.
 ### Client: WIP
 
+##
+
 ### Client PoC:
 ![dyulMYI](https://user-images.githubusercontent.com/13387378/146781045-d2b10301-eccd-47ce-9dee-3ac07cb3f620.png)
 

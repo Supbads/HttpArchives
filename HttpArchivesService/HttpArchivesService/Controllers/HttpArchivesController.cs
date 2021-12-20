@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using HttpArchivesService.Features.HttpArchives.RenameHarFiles;
 using HttpArchivesService.Features.HttpArchives.UploadHarFiles;
@@ -10,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using HttpArchivesService.Features.HttpArchives.GetHarById;
 using HttpArchivesService.Features.HttpArchives.GetHarsByCurrentUser;
 using HttpArchivesService.Features.HttpArchives.ChangeHarFilesDirectories;
+using HttpArchivesService.Features.HttpArchives.PreviewHarById;
+using HttpArchivesService.Features.HttpArchives.PreviewHarById.PreviewModels;
 
 namespace HttpArchivesService.Controllers
 {
@@ -38,6 +39,14 @@ namespace HttpArchivesService.Controllers
         [HttpGet]
         [Route("get-by-id")]
         public async Task<ActionResult<HarResponseDto>> GetdHARsById([Required][FromQuery] GetHarById.GetHarByIdRequest request)
+        {
+            return await this._mediator.Send(request);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("preview-by-id")]
+        public async Task<ActionResult<HarPreview>> GetHarPreviewById([Required][FromQuery] PreviewHarById.PreviewHarByIdRequest request)
         {
             return await this._mediator.Send(request);
         }

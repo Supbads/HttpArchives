@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using HttpArchivesService.Data;
@@ -29,9 +28,12 @@ namespace HttpArchivesService.Features.HttpArchives.GetHarById
 
             public async Task<HarResponseDto> Handle(GetHarByIdRequest request, CancellationToken cancellationToken)
             {
-                var user = _userProvider.GetCurrentUserExplicit();
+                var user = await _userProvider.GetCurrentUserExplicit();
 
                 var har = await this._context.HttpArchiveRecords.FindAsync(request.HarId);
+
+                // todo validate
+                //todo finish
 
                 var result = new HarResponseDto
                 {

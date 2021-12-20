@@ -9,5 +9,7 @@
 
 
 A React application where users can upload Har files and manage them (Upload/Move/Preview/Rename/Delete) in a directory like structure.
+
 A user can upload http archive files by drag and drop or navigating his file system. He can then move them and organize them into folders however they see fit.
+
 The Client will then call the backend service based on the action performed.
